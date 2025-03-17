@@ -200,7 +200,7 @@ export default function RoomSidebar() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-gray-900 to-gray-800 h-[calc(100vh-4rem)] overflow-hidden w-72 flex flex-col justify-between shadow-lg">
+    <div className="bg-gradient-to-b from-gray-900 to-gray-800 h-[calc(100vh-4rem)]  w-72 flex flex-col justify-between shadow-lg">
       {!showMessageView ? (
         <>
           {/* Header */}
@@ -291,6 +291,7 @@ export default function RoomSidebar() {
           )}
 
           {/* Button Section */}
+          <div className="flex flex-col gap-1.5">
           <button
             className="h-12 bg-gradient-to-r cursor-pointer from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 rounded-lg text-white font-medium shadow-md transition duration-200 relative flex items-center justify-center gap-2"
             onClick={handleMessageButtonClick}
@@ -310,6 +311,7 @@ export default function RoomSidebar() {
             <FaSignOutAlt />
             Leave Room
           </button>
+          </div>
         </>
       ) : (
         <>
