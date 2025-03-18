@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { createContext, useState, useEffect, ReactNode, useContext } from "react";
+import { VITE_API_URL } from "@/config/env";
 
 // Create socket context
 const socketContext = createContext<Socket | null>(null);
@@ -9,7 +10,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const socketConnection = io("http://localhost:3000");
+    const socketConnection = io(VITE_API_URL);
     setSocket(socketConnection);
 
     socketConnection.on("connection", () => {
