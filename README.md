@@ -47,7 +47,7 @@
   - Node.js
   - Express.js
   - Socket.IO (for WebSocket communication)
-  - Code Execution API (e.g., Judge0, Piston, or custom implementation)
+  - Code Execution API Piston
 
 - **Other Tools**:
   - React Router (for routing)
