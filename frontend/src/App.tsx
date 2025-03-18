@@ -1,8 +1,8 @@
-import React from 'react';
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Page from './components/Page';
-import Room from './components/Room';
 import { SocketProvider } from './contextApi/Context';
+import Page from './components/page';
+import Room from './components/room';
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Page />} />
-          <Route path="/room/:roomId" element={<Room />} />
+          <Route path="/room/:roomId" element={<Room/>} />
         </Routes>
       </Router>
     </SocketProvider>

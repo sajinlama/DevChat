@@ -18,7 +18,7 @@ const CodeOutput: React.FC<CodeOutputProps> = ({ language, sourceCode, isHost, r
 
   useEffect(() => {
     // Listen for output code updates
-    socket.on("updateOutputCode", (data) => {
+    socket?.on("updateOutputCode", (data) => {
       console.log("Received output update:", data);
       setOutput(data);
       setError(data.toLowerCase().includes("error") || data.toLowerCase().includes("exception"));
@@ -26,7 +26,7 @@ const CodeOutput: React.FC<CodeOutputProps> = ({ language, sourceCode, isHost, r
 
     // Clean up the event listener when component unmounts
     return () => {
-      socket.off("updateOutputCode");
+      socket?.off("updateOutputCode");
     };
   }, [socket]);
 
@@ -34,7 +34,7 @@ const CodeOutput: React.FC<CodeOutputProps> = ({ language, sourceCode, isHost, r
     // Verify host status before running code
     if (!isHost) {
       console.log("Non-host attempting to run code");
-      socket.emit("checkHostStatus", { roomId });
+      socket?.emit("checkHostStatus", { roomId });
       return;
     }
 
@@ -46,7 +46,7 @@ const CodeOutput: React.FC<CodeOutputProps> = ({ language, sourceCode, isHost, r
       setOutput(errorMsg);
       setError(true);
       // Share this error with others in the room
-      socket.emit("outputCode", { roomId, output: errorMsg });
+      socket?.emit("outputCode", { roomId, output: errorMsg });
       return;
     }
 
@@ -59,9 +59,9 @@ const CodeOutput: React.FC<CodeOutputProps> = ({ language, sourceCode, isHost, r
       console.log(runningMsg);
       setOutput(runningMsg);
       // Share this status with others
-      socket.emit("outputCode", { roomId, output: runningMsg });
+      socket?.emit("outputCode", { roomId, output: runningMsg });
 
-      // Execute the code
+     
       const response = await executeCode(language, sourceCode);
       console.log("API Response:", response);
 
@@ -81,14 +81,18 @@ const CodeOutput: React.FC<CodeOutputProps> = ({ language, sourceCode, isHost, r
       setError(outputText.toLowerCase().includes("error") || outputText.toLowerCase().includes("exception"));
 
       // Share with others in the room
-      socket.emit("outputCode", { roomId, output: outputText });
+      socket?.emit("outputCode", { roomId, output: outputText });
     } catch (error) {
       console.error("Execution error:", error);
-      const errorMessage = `Execution failed: ${error.message}`;
+      let errorMessage:string ="";
+      if(error instanceof Error){
+        errorMessage = `Execution failed: ${error.message}`;
+        
+      }
       setOutput(errorMessage);
       setError(true);
       // Share the error with others
-      socket.emit("outputCode", { roomId, output: errorMessage });
+      socket?.emit("outputCode", { roomId, output: errorMessage });
     } finally {
       setLoading(false);
     }

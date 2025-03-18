@@ -3,7 +3,7 @@ import Editor from "@monaco-editor/react";
 import { CODE_SNIPPETS } from "../constant";
 import CodeOutput from "./codeOutput";
 import { useSocket } from "@/contextApi/Context";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 interface CodeEditorProps {
   language: keyof typeof CODE_SNIPPETS;
@@ -15,6 +15,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language }) => {
   const editorRef = useRef<any>(null);
   const socket = useSocket();
   const { roomId } = useParams<{ roomId: string }>();
+  
   console.log(roomId);
 
   useEffect(() => {
@@ -24,11 +25,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language }) => {
   useEffect(() => {
     // Check if this user is the host when component mounts
     if (roomId) {
-      socket.emit("checkHostStatus", { roomId });
+      socket?.emit("checkHostStatus", { roomId });
     }
 
     // Listen for host status updates
-    socket.on("hostStatus", (status) => {
+    socket?.on("hostStatus", (status) => {
       console.log("Received host status:", status.isHost);
       console.log("hello sajin is host");
       setIsHost(status.isHost);
@@ -40,16 +41,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language }) => {
     });
 
     // Listen for code changes from host
-    socket.on("codeChange", (newCode) => {
+    socket?.on("codeChange", (newCode) => {
       console.log("Received code update");
       setCode(newCode);
     });
 
     // Listen for userList updates (which include host status)
-    socket.on("userList", (users) => {
+    socket?.on("userList", (users) => {
       console.log("Updated user list:", users);
       // Find myself in the list and check if I'm the host
-      const userId = socket.id; // This assumes socket.id is your user ID
+      const userId = socket?.id; // This assumes socket?.id is your user ID
       const myUser = users.find((user: any) => user.id === userId);
       if (myUser && myUser.isHost !== undefined) {
         console.log("Setting host status from user list:", myUser.isHost);
@@ -60,15 +61,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language }) => {
     // Re-check host status periodically
     const intervalId = setInterval(() => {
       if (roomId) {
-        socket.emit("checkHostStatus", { roomId });
+        socket?.emit("checkHostStatus", { roomId });
       }
     }, 5000); // Check every 5 seconds
 
     // Clean up the event listeners when component unmounts
     return () => {
-      socket.off("codeChange");
-      socket.off("hostStatus");
-      socket.off("userList");
+      socket?.off("codeChange");
+      socket?.off("hostStatus");
+      socket?.off("userList");
       clearInterval(intervalId);
     };
   }, [socket, roomId]);
@@ -87,9 +88,17 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language }) => {
 
     // Double-check host status when editor mounts
     if (roomId) {
-      socket.emit("checkHostStatus", { roomId });
+      socket?.emit("checkHostStatus", { roomId });
     }
   };
+/*   useEffect(() => { */
+    
+  if(!roomId){
+    return <Navigate to="/"/>
+  }
+   
+ /*  }, []) */
+  
 
   const handleCodeChange = (newValue: string | undefined) => {
     if (!isHost) {
@@ -100,9 +109,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ language }) => {
     console.log("Host changing code");
     const updatedCode = newValue || "";
     setCode(updatedCode);
+    
 
     // Emit the code change to all users in the room
-    socket.emit("codeChange", { roomId, code: updatedCode });
+    socket?.emit("codeChange", { roomId, code: updatedCode });
   };
 
   return (

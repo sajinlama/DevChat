@@ -46,7 +46,7 @@ export default function RoomSidebar() {
     console.log("Sending message:", inputMessage);
 
     // Emit the message to the server
-    socket.emit("messageUser", { roomId, inputMessage });
+    socket?.emit("messageUser", { roomId, inputMessage });
     setInputMessage("");
 
     // Reset input field height
@@ -64,7 +64,7 @@ export default function RoomSidebar() {
   };
 
   const handleLeaveRoom = () => {
-    socket.emit("leaveRoom", { roomId, userId });
+    socket?.emit("leaveRoom", { roomId, userId });
     navigate("/"); // Navigate to home page or lobby
   };
 
@@ -77,19 +77,19 @@ export default function RoomSidebar() {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("userId", (data) => {
+    socket?.on("userId", (data) => {
       console.log("My user ID:", data.userId);
       setUserId(data.userId);
     });
 
-    socket.on("hostStatus", (status) => {
+    socket?.on("hostStatus", (status) => {
       console.log("Host status:", status.isHost);
       setIsHost(status.isHost);
     });
 
     return () => {
-      socket.off("userId");
-      socket.off("hostStatus");
+      socket?.off("userId");
+      socket?.off("hostStatus");
     };
   }, [socket]);
 
@@ -110,9 +110,9 @@ export default function RoomSidebar() {
       setUsers(updatedUsers);
     };
 
-    socket.on("userList", handleUserList);
+    socket?.on("userList", handleUserList);
 
-    socket.on("messageList", (messageData: MessageType[]) => {
+    socket?.on("messageList", (messageData: MessageType[]) => {
       console.log("Message list received:", messageData);
       if (Array.isArray(messageData)) {
         setMessages(messageData);
@@ -120,7 +120,7 @@ export default function RoomSidebar() {
     });
 
     // Listen for new messages
-    socket.on("message", (data: MessageType) => {
+    socket?.on("message", (data: MessageType) => {
       console.log("Message received:", data);
       setMessages((prevMessages) => [...prevMessages, data]);
 
@@ -131,9 +131,9 @@ export default function RoomSidebar() {
     });
 
     return () => {
-      socket.off("userList", handleUserList);
-      socket.off("messageList");
-      socket.off("message");
+      socket?.off("userList", handleUserList);
+      socket?.off("messageList");
+      socket?.off("message");
     };
   }, [socket, showMessageView]);
 
@@ -142,10 +142,10 @@ export default function RoomSidebar() {
     if (!socket || !roomId) return;
 
     // Request user list from the server
-    socket.emit("getUserList", { roomId });
+    socket?.emit("getUserList", { roomId });
 
     // Also request message history
-    socket.emit("getMessageList", { roomId });
+    socket?.emit("getMessageList", { roomId });
   }, [socket, roomId]);
 
   const handleBack = () => {
